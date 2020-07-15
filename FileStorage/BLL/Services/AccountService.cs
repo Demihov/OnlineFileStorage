@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.DTO;
@@ -15,27 +16,24 @@ using BLL.DTO.Authentication;
 
 namespace BLL.Services
 {
-    public class AccountService: IAccountService
+    public class AccountService : IAccountService
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly IFolderService _folderService;
         private readonly IMapper _mapper;
 
         public AccountService(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IFolderService folderService,
             IMapper mapper
         )
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _folderService = folderService;
             _mapper = mapper;
         }
 
-        public async Task<object> Login(LoginModel model)
+        public async Task<string> Login(LoginModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
@@ -48,24 +46,22 @@ namespace BLL.Services
             throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
         }
 
-        public async Task<object> Register( RegisterModel model, string pathToFolder)
+        public async Task<string> Register(RegisterModel model, string pathToFolder)
         {
             var user = _mapper.Map<RegisterModel, User>(model);
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            await _userManager.AddToRoleAsync(user, "NormalUser");
-
             if (result.Succeeded)
             {
-                _folderService.CreateFolder(Path.Combine(pathToFolder, model.UserName));
+                await _userManager.AddToRoleAsync(user, "NormalUser");
 
                 await _signInManager.SignInAsync(user, false);
-                return  GenerateJwtToken(model.Email, user);
+                return GenerateJwtToken(model.Email, user);
             }
             else
             {
-                return result.Errors;
+                return result.Errors.ToString();
             }
         }
 

@@ -20,12 +20,8 @@ namespace BLL
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            //services.AddScoped<IRepository<FileModel>, FileRepository>();
             services.AddScoped<IFileRepository, FileRepository>();
-            //services.AddScoped<IRepository<Supplier>, SupplierRepository>();
             services.AddScoped<IUnitOfWork, EFUnitOfWork>();
-
-
         }
     }
 }

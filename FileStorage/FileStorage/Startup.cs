@@ -78,8 +78,8 @@ namespace FileStorage
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
-            services.AddScoped<IFileService, FileService>();
-            services.AddScoped<IFolderService, FolderService>();
+            services.AddScoped<ICustomFileProvider, FileProvider>();
+            services.AddScoped<IFileService, FilesService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
@@ -100,12 +100,12 @@ namespace FileStorage
 
             app.UseCors(builder => builder.AllowAnyOrigin());
 
-            DataInitializer.SeedRoles(serviceProvider);
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            DataInitializer.SeedRoles(serviceProvider);
         }
 
         public static IConfiguration LoadConfiguration()

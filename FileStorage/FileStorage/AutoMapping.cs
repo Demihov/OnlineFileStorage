@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BLL.DTO;
 using BLL.DTO.Authentication;
+using BLL.DTO.File;
 using DAL.Models;
 
 namespace FileStorage
@@ -20,6 +21,8 @@ namespace FileStorage
             CreateMap<FileModelDTO, FileModel>();
 
             CreateMap<RegisterModel, User>();
+
+            CreateMap<FilePostRequest, FileModel>();
         }
     }
 }

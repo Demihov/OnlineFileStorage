@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using DAL.Models;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +22,8 @@ namespace DAL.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<FileModel>()
                 .HasOne(f => f.User)
                 .WithMany(u => u.FileModels)

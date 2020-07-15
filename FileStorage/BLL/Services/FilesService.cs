@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.DTO;
+using BLL.DTO.File;
 using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
 
 namespace BLL.Services
 {
-    public class FileService : IFileService
+    public class FilesService : IFileService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICustomFileProvider _fileProvider;
 
-        public FileService(IUnitOfWork unitOfWork, IMapper mapper)
+        public FilesService(IUnitOfWork unitOfWork, IMapper mapper, ICustomFileProvider customFileProvider)
         {
+            _fileProvider = customFileProvider;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -32,7 +35,7 @@ namespace BLL.Services
             if (file == null)
                 throw new FileNotFoundException($"file with id {id} not found");
 
-            return GetByPath(Path.Combine(contentRootPath, file.Name));
+            return _fileProvider.GetFile(Path.Combine(contentRootPath, file.Name));
         }
 
         public Task<FileModelDTO> Get(int id)
@@ -45,22 +48,32 @@ namespace BLL.Services
             throw new NotImplementedException();
         }
 
-        public Stream GetByPath(string path)
+        public async Task<FileModelDTO> Insert([Required] FilePostRequest request, string contentRootPath)
         {
-            return File.Open(path, FileMode.Open);
-        }
+            var file = _mapper.Map<FilePostRequest, FileModel>(request);
 
-        public FileModelDTO Insert(FileModelDTO item)
-        {
-            FileModel fileModel = _unitOfWork.FileRepository.Insert(_mapper.Map<FileModelDTO, FileModel>(item));
-            _unitOfWork.Save();
+            file.Name = request.File.FileName;
 
-            return _mapper.Map<FileModel, FileModelDTO>(fileModel);
+            string path = Path.Combine(contentRootPath, request.UserId);
+
+            await _fileProvider.AddFile(path, request.File);
+
+            _unitOfWork.FileRepository.Insert(file);
+            await _unitOfWork.Save();
+
+            return _mapper.Map<FileModel, FileModelDTO>(file);
         }
 
         public void Update(FileModelDTO item)
         {
             throw new NotImplementedException();
         }
+
+        public Stream GetByPath(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using DAL.Interfaces;
@@ -11,61 +12,33 @@ namespace DAL.Repositories
 {
     public class FileRepository : IFileRepository
     {
-        private ApplicationDbContext db;
+        private ApplicationDbContext _context;
 
         public FileRepository(ApplicationDbContext context)
         {
-            db = context;
+            _context = context;
         }
 
-        public IEnumerable<FileModel> GetAll()
-        {
-            return db.Files;
-            //return db.Categories.Include(c => c.Products);
-        }
         public async Task<FileModel> Get(int id)
         {
-            var file = await db.Files.FindAsync(id);
-            //var category = db.Categories.Single(c => c.Id == id);
-
-            //db.Entry(category).Collection(c => c.Products).Load();
-
-            return file;
+            return await _context.Files.FindAsync(id);
         }
 
         public FileModel Insert(FileModel file)
         {
-            if (file != null)
-                db.Files.Add(file);
-            return file;
-        }
-        public void Update(FileModel file)
-        {
-            db.Entry(file).State = EntityState.Modified;
-        }
-        public void Delete(int id)
-        {
-            FileModel file = db.Files.Find(id);
-            if (file != null)
-                db.Remove(file);
+            return _context.Files.Add(file).Entity;
         }
 
-        private bool disposed = false;
-        protected virtual void Dispose(bool disposing)
+        public void Delete(int id)
         {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    db.Dispose();
-                }
-            }
-            this.disposed = true;
+            FileModel file = _context.Files.Find(id);
+            if (file != null)
+                _context.Remove(file);
         }
-        public void Dispose()
+
+        public async Task<IEnumerable<FileModel>> GetFilesByUser(string userId)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            return await _context.Files.Where(i => i.User.Id == userId).ToListAsync();
         }
     }
 }

@@ -5,8 +5,8 @@ namespace BLL.Interfaces
 {
     public interface IAccountService
     {
-        public Task<object> Login(LoginModel model);
+        public Task<string> Login(LoginModel model);
 
-        public Task<object> Register(RegisterModel model, string pathToFolder);
+        public Task<string> Register(RegisterModel model, string pathToFolder);
     }
 }

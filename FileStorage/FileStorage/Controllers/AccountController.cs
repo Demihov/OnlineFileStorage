@@ -15,7 +15,6 @@ namespace FileStorage.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IAccountService _accountService;
         private readonly IWebHostEnvironment _appEnvironment;
@@ -23,19 +22,17 @@ namespace FileStorage.Controllers
         public AccountController(
             IWebHostEnvironment appEnvironment,
             UserManager<User> userManager,
-            SignInManager<User> signInManager,
             IAccountService accountService
             )
         {
             _appEnvironment = appEnvironment;
             _userManager = userManager;
-            _signInManager = signInManager;
             _accountService = accountService;
         }
 
-        private Task<User> GetCurrentUserAsync()
+        private async Task<User> GetCurrentUserAsync()
         {
-            return _userManager.GetUserAsync(User);
+            return await _userManager.GetUserAsync(User);
         }
 
         private string GetCurrentPath()
@@ -51,7 +48,7 @@ namespace FileStorage.Controllers
         {
             //return User.IsInRole("NormalUser");
 
-            //var userId = GetCurrentUserAsync().Id;
+            //var userId = await GetCurrentUserAsync().Id;
 
             var id = _userManager.GetUserId(User);
             return id;
@@ -62,16 +59,12 @@ namespace FileStorage.Controllers
         {
             
             return await _accountService.Login(model);
-
-            //throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
         }
 
         [HttpPost("register")]
         public async Task<object> Register([FromBody] RegisterModel model)
         {
             return await _accountService.Register(model, GetCurrentPath());
-
-            ////throw new ApplicationException("UNKNOWN_ERROR");
         }
     }
 }

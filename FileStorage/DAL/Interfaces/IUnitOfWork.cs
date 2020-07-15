@@ -6,7 +6,7 @@ using DAL.Models;
 
 namespace DAL.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
         IFileRepository FileRepository { get; }
         Task Save();
