@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,13 @@ namespace FileStorage.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IUserService _userService;
+
+        public UsersController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         // GET: api/Users
         [HttpGet]
         public IEnumerable<string> Get()
@@ -19,10 +27,11 @@ namespace FileStorage.Controllers
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetUser")]
+        public async Task<IActionResult> GetUser(string id)
         {
-            return "value";
+            var user = await _userService.GetUser(id);
+            return Ok(user);
         }
 
         // POST: api/Users

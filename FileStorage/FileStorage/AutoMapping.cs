@@ -1,8 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BLL.DTO;
 using BLL.DTO.Authentication;
 using BLL.DTO.File;
@@ -21,6 +17,7 @@ namespace FileStorage
             CreateMap<FileModelDTO, FileModel>();
 
             CreateMap<RegisterModel, User>();
+            CreateMap<UserUpdateModel, User>();
 
             CreateMap<FilePostRequest, FileModel>();
         }
