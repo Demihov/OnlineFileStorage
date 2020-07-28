@@ -26,15 +26,6 @@ namespace FileStorage.Controllers
             return Path.Combine(_appEnvironment.ContentRootPath, "Files");
         }
 
-        //// GET: api/Files
-        //[HttpGet]
-        //public object Get()
-        //{
-        //    var result = new { Test = "web api works!" };
-        //    return result;
-        //}
-
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFileById(string userId, int id)
         {
@@ -68,12 +59,5 @@ namespace FileStorage.Controllers
                 return BadRequest();
             }
         }
-
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-
-        //}
     }
 }

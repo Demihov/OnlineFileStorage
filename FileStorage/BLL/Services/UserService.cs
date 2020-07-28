@@ -10,16 +10,20 @@ using DAL.Interfaces;
 using DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using BLL.Exceptions;
+using System.IO;
 
 namespace BLL.Services
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
         private readonly ICustomFileProvider _customFileProvider;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UserService(
+            IUnitOfWork unitOfWork,
             IMapper mapper,
             ICustomFileProvider customFileProvider,
             UserManager<User> userManager)
@@ -27,6 +31,7 @@ namespace BLL.Services
             _mapper = mapper;
             _customFileProvider = customFileProvider;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<UserDTO> GetUser(string id)
@@ -34,7 +39,7 @@ namespace BLL.Services
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                //throw new ObjectNotFoundException($"user with id {id} not found"); ;
+                throw new ObjectNotFoundException($"user with id {id} not found");
             }
 
             return _mapper.Map<User, UserDTO>(user);
@@ -42,34 +47,33 @@ namespace BLL.Services
 
         public async Task<UserDTO> UpdateUser(UserUpdateModel userToUpdate)
         {
-            if (userToUpdate == null)
-            {
-                //throw new UserException()
-            }
-
             var user = await _userManager.FindByIdAsync(userToUpdate.Id);
-            if (user == null)
-            {
-                //throw new 
-            }
-
             await _userManager.UpdateAsync(user);
             return _mapper.Map<User, UserDTO>(user);
         }
 
-        public Task DeleteUser(string id)
+        public async Task DeleteUser(string contentRootPath, string id)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                throw new ObjectNotFoundException($"user with id {id} not found");
+
+            var path = Path.Combine(contentRootPath, id);
+            _customFileProvider.DeleteFolder(path);
+
+            await _userManager.DeleteAsync(user);
         }
 
-        public Task UserToAdmin(string id)
+        public async Task UserToAdmin(string id)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(id);
+            var result = await _userManager.AddToRoleAsync(user, "Administrator");
         }
 
-        public Task AdminToUser(string id)
+        public async Task AdminToUser(string id)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(id);
+            var result = await _userManager.RemoveFromRoleAsync(user, "Administrator");
         }
     }
 }

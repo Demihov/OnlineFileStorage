@@ -30,28 +30,9 @@ namespace FileStorage.Controllers
             _accountService = accountService;
         }
 
-        private async Task<User> GetCurrentUserAsync()
-        {
-            return await _userManager.GetUserAsync(User);
-        }
-
         private string GetCurrentPath()
         {
             return Path.Combine(_appEnvironment.ContentRootPath, "Files");
-        }
-
-
-        //[Authorize(Roles = "NormalUser")]
-        [Authorize]
-        [HttpGet("protected")]
-        public async Task<object> Protected()
-        {
-            //return User.IsInRole("NormalUser");
-
-            //var userId = await GetCurrentUserAsync().Id;
-
-            var id = _userManager.GetUserId(User);
-            return id;
         }
 
         [HttpPost("login")]

@@ -13,5 +13,6 @@ namespace BLL.Interfaces
         public Task AddFile(string path, IFormFile file);
         public Stream GetFile(string path);
         public void DeleteFile(string path);
+        public void DeleteFolder(string path);
     }
 }

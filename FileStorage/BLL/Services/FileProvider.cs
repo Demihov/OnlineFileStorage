@@ -37,5 +37,19 @@ namespace BLL.Services
                 File.Delete(path);
             }
         }
+      
+        public void DeleteFolder(string path)
+        {
+            try
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+                dirInfo.Delete(true);
+            }
+            catch (Exception ex)
+            {
+                //log
+                throw;
+            }
+        }
     }
 }

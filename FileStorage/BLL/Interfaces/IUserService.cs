@@ -11,9 +11,8 @@ namespace BLL.Interfaces
     {
         Task<UserDTO> GetUser(string id);
         Task<UserDTO> UpdateUser(UserUpdateModel request);
-        Task DeleteUser(string id);
+        Task DeleteUser(string contentRootPath, string id);
         Task UserToAdmin(string id);
         Task AdminToUser(string id);
-        //Task<PaginationResponse<UserWithRolesDto>> SearchUsersByName(string username, PaginationRequest request);
     }
 }
