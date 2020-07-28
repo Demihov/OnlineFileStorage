@@ -57,7 +57,6 @@ namespace FileStorage.Controllers
         [HttpPost("login")]
         public async Task<object> Login([FromBody] LoginModel model)
         {
-            
             return await _accountService.Login(model);
         }
 

@@ -34,7 +34,7 @@ namespace BLL.Services
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                throw new ObjectNotFoundException($"user with id {id} not found"); ;
+                //throw new ObjectNotFoundException($"user with id {id} not found"); ;
             }
 
             return _mapper.Map<User, UserDTO>(user);

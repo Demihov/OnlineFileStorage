@@ -2,7 +2,9 @@
 using BLL.DTO;
 using BLL.DTO.Authentication;
 using BLL.DTO.File;
+using BLL.DTO.Pagination;
 using DAL.Models;
+using DAL.Models.Pagination;
 
 namespace FileStorage
 {
@@ -20,6 +22,9 @@ namespace FileStorage
             CreateMap<UserUpdateModel, User>();
 
             CreateMap<FilePostRequest, FileModel>();
+
+            CreateMap<PaginationParametersDTO, PaginationParameters>();
+            CreateMap<PagedList<FileModel>, PagedListDTO<FileModelDTO>>();
         }
     }
 }

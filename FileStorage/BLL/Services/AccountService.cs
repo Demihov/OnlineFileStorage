@@ -33,14 +33,14 @@ namespace BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<string> Login(LoginModel model)
+        public async Task<object> Login(LoginModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
 
             if (result.Succeeded)
             {
-                var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-                return GenerateJwtToken(model.Email, appUser);
+                var appUser = _userManager.Users.SingleOrDefault(r => r.UserName == model.UserName);
+                return new {Token = GenerateJwtToken(model.UserName, appUser) } ;
             }
 
             throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
@@ -71,7 +71,7 @@ namespace BLL.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id)
             };
 
             var now = DateTime.UtcNow;

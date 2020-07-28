@@ -7,6 +7,7 @@ using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using DAL.Interfaces;
 using System.Threading.Tasks;
+using DAL.Models.Pagination;
 
 namespace DAL.Repositories
 {
@@ -39,6 +40,15 @@ namespace DAL.Repositories
         public async Task<IEnumerable<FileModel>> GetFilesByUser(string userId)
         {
             return await _context.Files.Where(i => i.User.Id == userId).ToListAsync();
+        }
+
+        public async Task<PagedList<FileModel>> GetFilesByUser(string userId, PaginationParameters parameters)
+        {
+            var files = _context.Files
+                .Where(i => i.UserId == userId)
+                .OrderByDescending(on => on.Name);
+
+            return PagedList<FileModel>.ToPagedList(files, parameters.PageNumber, parameters.PageSize);
         }
     }
 }

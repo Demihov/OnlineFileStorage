@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 using BLL.DTO.File;
+using BLL.DTO.Pagination;
 using BLL.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,24 +26,33 @@ namespace FileStorage.Controllers
             return Path.Combine(_appEnvironment.ContentRootPath, "Files");
         }
 
-        // GET: api/Files
-        [HttpGet]
-        public object Get()
-        {
-            var result = new { Test = "web api works!" };
-            return result;
-        }
+        //// GET: api/Files
+        //[HttpGet]
+        //public object Get()
+        //{
+        //    var result = new { Test = "web api works!" };
+        //    return result;
+        //}
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFileById(int id)
+        public async Task<IActionResult> GetFileById(string userId, int id)
         {
-            var file = await _fileService.GetFile(GetContentRootPath(), id);
+            var file = await _fileService.GetFile(GetContentRootPath(),userId, id);
 
             if (file == null)
                 return NotFound("File not found");
 
             return Ok(file);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFiles([Required] string userId, [Required] int page, [Required] int itemCount)
+        {
+            var request = new PaginationParametersDTO { PageSize = itemCount, PageNumber = page };
+            var files = await _fileService.GetFiles(userId, request);
+
+            return Ok(files);
         }
 
         [HttpPost]
@@ -58,18 +69,11 @@ namespace FileStorage.Controllers
             }
         }
 
-        // PUT: api/Files/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+        //// DELETE: api/ApiWithActions/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> Delete(int id)
+        //{
 
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-
-        }
+        //}
     }
 }
