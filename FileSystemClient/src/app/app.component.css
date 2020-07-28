@@ -1,0 +1,11 @@
+h1{
+    margin-left: auto;
+    margin-right: auto;
+    width: 10em;
+    text-align: center
+}
+
+.expanded-toolbar {
+  justify-content: space-between;
+  align-items: center;
+}
