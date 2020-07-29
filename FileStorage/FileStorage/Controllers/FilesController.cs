@@ -26,7 +26,7 @@ namespace FileStorage.Controllers
             return Path.Combine(_appEnvironment.ContentRootPath, "Files");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{userID}/{id}")]
         public async Task<IActionResult> GetFileById(string userId, int id)
         {
             var file = await _fileService.GetFile(GetContentRootPath(),userId, id);

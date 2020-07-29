@@ -42,8 +42,12 @@ namespace BLL.Services
         {
             try
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(path);
-                dirInfo.Delete(true);
+                if (Directory.Exists(path))
+                {
+                    DirectoryInfo dirInfo = new DirectoryInfo(path);
+                    dirInfo.Delete(true);
+                }
+                
             }
             catch (Exception ex)
             {
